@@ -1,0 +1,63 @@
+﻿<!DOCTYPE html>
+<html>
+<head runat="server">
+	<title></title>
+</head>
+<body>
+		<script>
+			$(document).ready(function () {
+
+        $.fn.serializeObject = function () {
+            var o = {};
+            var a = this.serializeArray();
+            $.each(a, function () {
+                if (o[this.name]) {
+                    if (!o[this.name].push) {
+                        o[this.name] = [o[this.name]];
+                    }
+                    o[this.name].push(this.value || '');
+                } else {
+                    o[this.name] = this.value || '';
+                }
+            });
+            return o;
+        };
+
+		$("#form2").submit(function () {
+        var dataType = 'application/json; charset=utf-8';
+        var data = $("#form1").serializeObject();
+        var jsonData = JSON.stringify(data);
+        console.log('Submitting form...');
+        $.ajax({
+            type: 'POST',
+            url: 'Home/NumVerify',
+            dataType: 'json',
+            contentType: dataType,
+            data: jsonData,
+            success: function (result) {
+                console.log('Data received: ');
+                console.log(result);
+                $('#numResult').html("<p>" + JSON.stringify(result) + "</p>");
+            }
+        });
+        return false;
+        });
+});
+</script>
+	<form id="form2">
+    <div>
+        Enter number: <input type="text" id="Number" name="Number"/>
+        Enter country code: <select id="CountryCode" name="CountryCode">
+                              <option value="IN">India</option>
+                              <option value="US">United States</option>
+                              <option value="GB">United Kingdom</option>
+                            </select>
+    </div>
+    <div>
+        <input type="submit" value="submit number">
+    </div>
+</form>
+
+<div id="numResult">
+</div>
+</body>
